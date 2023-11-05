@@ -23,6 +23,10 @@ npx serve
 
 ![image](https://github.com/Davidster/ikari/assets/2389735/8d39231d-d96f-4ec0-a44b-46be2dd8687f)
 
+> :warning: If you get an error like npm ERR! code ENOENT, run this command then try again:
+> 
+> `mkdir "%AppData%\npm"`
+
 - Open up the URL in your browser. For the screenshot above, that would be: http://localhost:3000
 
 - You can replace the `input_image.png` file with any image you want (just make sure it has this exact name and path) then refresh the page. It will keep working as long as you keep the cmd window open with the `npx serve` program running.
