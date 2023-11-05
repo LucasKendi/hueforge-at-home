@@ -29,4 +29,4 @@ npx serve
 
 - Open up the URL in your browser. For the screenshot above, that would be: http://localhost:3000
 
-- You can replace the `input_image.png` file with any image you want (just make sure it has this exact name and path) then refresh the page. It will keep working as long as you keep the cmd window open with the `npx serve` program running.
+- You can replace the `input_image.png` file with any image you want (just make sure it has this exact name and path) then refresh the page. If you need to use a jpg instead of png the you would need to make some modifications to main.js (edit the line `name = "input_image.png"` to point to your jpg file name) It will keep working as long as you keep the cmd window open with the `npx serve` program running.
