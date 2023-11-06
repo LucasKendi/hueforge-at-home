@@ -1,6 +1,6 @@
 p5.disableFriendlyErrors = true; //small performance boost
 function preload(){
-	name = "bird.png"
+	name = "input_image.png"
 	img = loadImage(name)
 	copy = loadImage(name)
 }
