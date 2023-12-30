@@ -5,7 +5,14 @@ Basic javascript implementation of layer-color mixing for 3d printing
 
 It does not generate stl files from images (like hueforge actually does), so I recommend converting your images to stl using something like https://3dp.rocks/lithophane/
 
-## To run on Windows:
+## Running on Windows with VS code:
+  - Download this project and open it on VS Code
+  - Add the VS Code [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+ - Click on the `Go Live` button on the bottom left corner
+ - It will open your browser on the local server, usually on port 5500
+ - You can edit the image path and layers in the `main.js` file
+ 
+## Running on Windows with nodejs:
 
 - Install [nodejs](https://nodejs.org/en)
 - [Download](https://github.com/Davidster/hueforge-at-home/archive/refs/heads/main.zip) this project and unzip it

@@ -8,7 +8,7 @@ function preload(){
 function setup(){
 	use_gray = true // WIP for working with hue threshold 
 	range = use_gray ? 255 : 360 // rgb vs hue ranges
-	factor = 1 // scaling factor for images, use 2 or more if it takes too long
+	factor = 1 // scaling factor for images, use 2 or more if it takes too long to process
 	layers = 15 // stl model layers
 	layer = 1
 	base_color = 'black'
@@ -44,10 +44,10 @@ function draw() {
 			if(current_value >= thresh){ // use this switch-case to setup your layer changes. Add or remove layers and set mix-factor as you wish
 				switch(true) {
 					case(layer <= 1):
-						current_color = [base_color, 0.3]
+						current_color = [base_color, 0.3] // current_color is a size 2 array with a p5 color definition and it's "translucency"
 						break;
 					case(layer <= 3):
-						current_color = ["blue", 0.3]
+						current_color = ["blue", 0.3] 
 						break;
 					case(layer <= 11):
 						current_color = ["yellow", 0.3]
