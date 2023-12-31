@@ -20,10 +20,16 @@ function setup(){
 	copy.loadPixels()
 	start = new Date()
 	createCanvas(img.width*2 + 20, img.height);
+
+	total = Date.now()
+	prev_color = []
+	dest_color = ''
 }
 
 function draw() {
 	if(layer <= layers) {
+		let time = Date.now()
+
 		let thresh = parseInt(subd * (layer - 1)) // threshold to change pixels
 		for(i = 0; i < copy.pixels.length; i+=4){
 			if (img.pixels[i + 3] == 0) continue; // skip on transparent pixels for png files
@@ -59,17 +65,22 @@ function draw() {
 				color_layer(current_color)
 			}
 		}
-
-		console.log("Layer " + layer + ', with '+ current_color)
+		console.log("Layer " + layer + ", with "+ current_color + ", taking: " + (Date.now() - time)/1000.0 + "s")
 		copy.updatePixels()
-		image(copy, 0,0)	
-		image(img, img.width + 20,0)	
+		image(copy, 0, 0)	
+		image(img, img.width + 20, 0)	
 		layer++
+	} else {
+		console.log("Took:" + (Date.now() - total)/1000.0 + "s")
+		noLoop()
 	}
 }
 
 function color_layer(c_color) {
-	dest_color = color(c_color[0])
+	if(prev_color[0]	!= c_color[0]){
+		prev_color = c_color
+		dest_color = color(c_color[0])
+	}
 	result = mixbox.lerp(orig_color.levels, dest_color.levels, c_color[1]) // color mix using mixbox for accurate pigment mixing results
 	copy.pixels[i + 0] = result[0]
 	copy.pixels[i + 1] = result[1]
