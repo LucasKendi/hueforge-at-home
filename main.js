@@ -8,19 +8,25 @@ function preload(){
 function setup(){
 	use_gray = true // WIP for working with hue threshold 
 	range = use_gray ? 255 : 360 // rgb vs hue ranges
-	factor = 1 // scaling factor for images, use 2 or more if it takes too long to process
-	layers = 15 // stl model layers
+	final_w = 600 // scaling factor for images, use 2 or more if it takes too long to process
+	layers = 20 // stl model layers
 	layer = 1
 	base_color = 'black'
 
 	subd = parseInt(range/layers)
-	img.resize(img.width/factor, img.height/factor);
-	copy.resize(copy.width/factor, copy.height/factor);
+	img.resize(final_w, 0);
+	copy.resize(final_w, 0);
 	img.loadPixels()
 	copy.loadPixels()
-	start = new Date()
-	createCanvas(img.width*2 + 20, img.height);
+	createCanvas(img.width*2 + 200, img.height);
 
+	button = createButton('Reset');
+  button.position(1220, 100);
+  button.mousePressed(() => {
+		layer = 1;
+		blend(0, 0, final_w, img.height, 0, 0, final_w, img.height, 'REPLACE')
+  });
+	
 	total = Date.now()
 	prev_color = []
 	dest_color = ''
