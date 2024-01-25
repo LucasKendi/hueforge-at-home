@@ -1,8 +1,8 @@
 p5.disableFriendlyErrors = true; //small performance boost
 function preload(){
-	name = "input_image.png"
-	img = loadImage(name)
-	copy = loadImage(name)
+	input = createFileInput(handleImage);
+	input.position(1240, 100);
+	input.class("p-5 bg-black text-white")
 }
 
 function setup(){
@@ -14,19 +14,7 @@ function setup(){
 	base_color = 'black'
 
 	subd = parseInt(range/layers)
-	img.resize(final_w, 0);
-	copy.resize(final_w, 0);
-	img.loadPixels()
-	copy.loadPixels()
-	createCanvas(img.width*2 + 200, img.height);
 
-	button = createButton('Reset');
-  button.position(1220, 100);
-  button.mousePressed(() => {
-		layer = 1;
-		blend(0, 0, final_w, img.height, 0, 0, final_w, img.height, 'REPLACE')
-  });
-	
 	total = Date.now()
 	prev_color = []
 	dest_color = ''
@@ -34,48 +22,49 @@ function setup(){
 
 function draw() {
 	if(layer <= layers) {
-		let time = Date.now()
+		if(typeof img !== 'undefined' && typeof copy !== 'undefined' && img.pixels && copy.pixels) {		
+			let time = Date.now()
+			let thresh = parseInt(subd * (layer - 1)) // threshold to change pixels
+			for(i = 0; i < img.pixels.length; i+=4){
+				if (img.pixels[i + 3] == 0) continue; // skip on transparent pixels for png files
 
-		let thresh = parseInt(subd * (layer - 1)) // threshold to change pixels
-		for(i = 0; i < copy.pixels.length; i+=4){
-			if (img.pixels[i + 3] == 0) continue; // skip on transparent pixels for png files
-
-			if (layer == 1) { // the origin color for the color mix. After the first layer, it is the current image's color
-				orig_color = color(base_color)
-			} else {
-				orig_color = color(copy.pixels[i], copy.pixels[i + 1], copy.pixels[i + 2])
-			}
-
-			if (use_gray) {
-				current_value = (img.pixels[i] + img.pixels[i + 1] + img.pixels[i + 2])/3
-			} else {
-				let c = color(img.pixels[i], img.pixels[i + 1], img.pixels[i + 2])
-				current_value = hue(c)
-			}
-
-			if(current_value >= thresh){ // use this switch-case to setup your layer changes. Add or remove layers and set mix-factor as you wish
-				switch(true) {
-					case(layer <= 1):
-						current_color = [base_color, 0.3] // current_color is a size 2 array with a p5 color definition and it's "translucency"
-						break;
-					case(layer <= 3):
-						current_color = ["blue", 0.3] 
-						break;
-					case(layer <= 11):
-						current_color = ["yellow", 0.3]
-						break;
-					case(layer <= 15):
-						current_color = ["white", 0.3]
-						break;
+				if (layer == 1) { // the origin color for the color mix. After the first layer, it is the current image's color
+					orig_color = color(base_color)
+				} else {
+					orig_color = color(copy.pixels[i], copy.pixels[i + 1], copy.pixels[i + 2])
 				}
-				color_layer(current_color)
+
+				if (use_gray) {
+					current_value = (img.pixels[i] + img.pixels[i + 1] + img.pixels[i + 2])/3
+				} else {
+					let c = color(img.pixels[i], img.pixels[i + 1], img.pixels[i + 2])
+					current_value = hue(c)
+				}
+
+				if(current_value >= thresh){ // use this switch-case to setup your layer changes. Add or remove layers and set mix-factor as you wish
+					switch(true) {
+						case(layer <= 1):
+							current_color = [base_color, 0.3] // current_color is a size 2 array with a p5 color definition and it's "translucency"
+							break;
+						case(layer <= 3):
+							current_color = ["blue", 0.3] 
+							break;
+						case(layer <= 11):
+							current_color = ["yellow", 0.3]
+							break;
+						case(layer <= 15):
+							current_color = ["white", 0.3]
+							break;
+					}
+					color_layer(current_color)
+				}
 			}
+			console.log("Layer " + layer + ", with "+ current_color + ", taking: " + (Date.now() - time)/1000.0 + "s")
+			copy.updatePixels()
+			image(copy, 0, 0)	
+			image(img, img.width + 20, 0)	
+			layer++
 		}
-		console.log("Layer " + layer + ", with "+ current_color + ", taking: " + (Date.now() - time)/1000.0 + "s")
-		copy.updatePixels()
-		image(copy, 0, 0)	
-		image(img, img.width + 20, 0)	
-		layer++
 	} else {
 		console.log("Took:" + (Date.now() - total)/1000.0 + "s")
 		noLoop()
@@ -91,4 +80,23 @@ function color_layer(c_color) {
 	copy.pixels[i + 0] = result[0]
 	copy.pixels[i + 1] = result[1]
 	copy.pixels[i + 2] = result[2]
+}
+
+function handleImage(file) {
+  if (file.type === 'image') {
+		img = loadImage(file.data, () => {
+			copy = createImage(img.width, img.height)
+			copy.copy(img, 0, 0, img.width, img.height, 0, 0, copy.width, copy.height)
+			layer = 0
+			img.resize(final_w, 0);
+			copy.resize(final_w, 0);
+			img.loadPixels()
+			copy.loadPixels()
+			createCanvas(img.width*2 + 200, img.height);
+			draw()
+		})
+  } else {
+    img = null;
+		copy = null;
+  }
 }
