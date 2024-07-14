@@ -8,15 +8,7 @@ function preload(){
 function setup(){
 	setup_variables();
 	fixedImage();
-	input = createFileInput(handleImage);
-	input.position(250, 100);
-	input.class("file:bg-indigo-500 bg-white pr-2 file:text-white file:p-2 file:border-0 m-2 text-sm rounded-lg shadow-md shadow-indigo-200");
-	colorsAt = {
-		1: [base_color, 1],
-		3: ["blue", 0.3],
-		11: ["yellow",  0.25],
-		15: ["white",  0.25],
-	}
+	colorsAt = getLayerInfo();
 }
 
 function setup_variables(){
@@ -86,9 +78,10 @@ function color_layer(cur_color) {
   copy.pixels[i + 2] = result[2]
 }
 
-function handleImage(file) {
-  if (file.type === 'image') {
-		img = loadImage(file.data, () => {
+function handleImage() {
+	file = select('#fileInput').elt.files[0]
+	if (file.type.startsWith('image/')) {
+		img = loadImage(URL.createObjectURL(file), () => {
 			copy = createImage(img.width, img.height)
 			copy.copy(img, 0, 0, img.width, img.height, 0, 0, copy.width, copy.height)
 			img.resize(final_w/2, 0);
@@ -96,10 +89,23 @@ function handleImage(file) {
 			img.loadPixels()
 			copy.loadPixels()
 			createCanvas(final_w, img.height, existing);
+			layer = 1;
 			loop()
 		})
-  } else {
-    img = null;
+	} else {
+		img = null;
 		copy = null;
-  }
+	}
+}
+
+function getLayerInfo() {
+	let = layerInfo = {}
+	items = document.querySelectorAll('li');
+	items.forEach(element => {
+		let color = element.querySelector("span#color").innerHTML
+		let layer = parseInt(element.querySelector("span#layer").innerHTML)
+		let opacity = parseFloat(element.querySelector("span#opacity").innerHTML)
+		layerInfo[layer] = [color, opacity]
+	});
+	return layerInfo
 }
