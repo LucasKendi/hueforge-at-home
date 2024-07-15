@@ -10,29 +10,34 @@
     <div class="min-h-full w-full mt-10">
       <main class="m-8 flex gap-8 bg-gray-800 h-full">
         <div class="px-5 py-8 bg-gray-200 w-1/3 grow border-4 border-neutral-500 rounded-lg flex flex-col content-center">
-          <input id="fileInput" type="file" accept="image/*" onchange="handleImage()" class="w-1/2 self-center file:bg-indigo-500 pr-2 m-3 bg-white file:text-white file:p-2 file:border-0 text-sm rounded-lg"></input>
-          <button class="w-1/5 self-center my-4 p-1 bg-emerald-500 hover:bg-blue-700 text-white font-bold rounded-full">Add color</button>
-          <div class="w-2/3 p-4 self-center bg-gray-200 m-4 rounded-lg border-4 border-neutral-500">
-            <ul id="colorList">
-              <li>
-                <span id="color">black</span>
-                <span id="layer">1</span>
-                <span id="opacity">1</span>
+          <input id="fileInput" type="file" accept="image/*" onchange="handleImage()" class="w-1/2 border border-gray-300 text-gray-900 self-center file:bg-indigo-500 m-3 bg-white file:text-white file:p-2 file:border-0 text-sm rounded-lg"></input>
+          <!-- <button onclick="addLayerInfo()" class="w-1/5 self-center my-4 p-1 bg-emerald-500 hover:bg-blue-700 text-white font-bold rounded-full">Add color</button> -->
+          <div class="w-2/3 p-4 self-center bg-gray-200 m-4 rounded-lg border-2 border-gray-300">
+            <ul onchange="setup()" id="colorList" class="flex flex-col gap-2 text-gray-700 font-semibold">
+              <li class="flex h-4">
+                <label for="default-range" class="w-1/3 px-2 font-medium text-gray-900 dark:text-white">Color</label>
+                <label for="default-range" class="w-1/3 px-2 font-medium text-gray-900 dark:text-white">Layer</label>
+                <label for="default-range" class="w-1/3 px-2 font-medium text-gray-900 dark:text-white">Opacity 0-1</label>
               </li>
-              <li>
-                <span id="color">blue</span>
-                <span id="layer">3</span>
-                <span id="opacity">0.3</span>
+              <li class="colorInput flex h-8">
+                <input class="color w-1/3 px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="black" />
+                <input class="layer w-1/3 px-2 bg-gray-50 border border-gray-300" value="1" />
+                <input class="opacity w-1/3 px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="1" />
               </li>
-              <li>
-                <span id="color">yellow</span>
-                <span id="layer">11</span>
-                <span id="opacity">0.25</span>
+              <li class="colorInput flex h-8">
+                <input class="color w-1/3 px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="blue" />
+                <input class="layer w-1/3 px-2 bg-gray-50 border border-gray-300" value="3" />
+                <input class="opacity w-1/3 px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
               </li>
-              <li>
-                <span id="color">white</span>
-                <span id="layer">15</span>
-                <span id="opacity">0.25</span>
+              <li class="colorInput flex h-8">
+                <input class="color w-1/3 px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="yellow" />
+                <input class="layer w-1/3 px-2 bg-gray-50 border border-gray-300" value="11" />
+                <input class="opacity w-1/3 px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
+              </li>
+              <li class="colorInput flex h-8">
+                <input class="color w-1/3 px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="white" />
+                <input class="layer w-1/3 px-2 bg-gray-50 border border-gray-300" value="15" />
+                <input class="opacity w-1/3 px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
               </li>
             </ul>
           </div>

@@ -8,7 +8,8 @@ function preload(){
 function setup(){
 	setup_variables();
 	fixedImage();
-	colorsAt = getLayerInfo();
+	getLayerInfo();
+	loop();
 }
 
 function setup_variables(){
@@ -21,7 +22,12 @@ function setup_variables(){
 	dest_color = ''
 	total = Date.now()
 	existing = document.getElementById('existing-canvas')
+	existing.getContext("2d", { willReadFrequently: true })
 	final_w = existing.parentElement.offsetWidth
+}
+
+function addLayerInfo() {
+	colorList = document.getElementById("colorList")
 }
 
 function fixedImage() {
@@ -33,7 +39,7 @@ function fixedImage() {
 }
 
 function draw() {
-  if(layer <= layers) {
+  if(layer <= layers && colorsAt) {
 		if(typeof img !== 'undefined' && typeof copy !== 'undefined' && img.pixels && copy.pixels) {
 			let time = Date.now()
 			let thresh = parseInt(subd * (layer - 1)) // threshold to change pixels
@@ -62,9 +68,8 @@ function draw() {
 			layer++
 		}
 	} else {
-		console.log("Took:" + (Date.now() - total)/1000.0 + "s")
 		noLoop()
-  }
+	}
 }
 
 function color_layer(cur_color) {
@@ -99,13 +104,12 @@ function handleImage() {
 }
 
 function getLayerInfo() {
-	let = layerInfo = {}
-	items = document.querySelectorAll('li');
+	colorsAt = {}
+	items = document.querySelectorAll('li.colorInput');
 	items.forEach(element => {
-		let color = element.querySelector("span#color").innerHTML
-		let layer = parseInt(element.querySelector("span#layer").innerHTML)
-		let opacity = parseFloat(element.querySelector("span#opacity").innerHTML)
-		layerInfo[layer] = [color, opacity]
+		let color = element.querySelector("input.color").value
+		let layer = element.querySelector("input.layer").value
+		let opacity = element.querySelector("input.opacity").value
+		colorsAt[layer] = [color, opacity]
 	});
-	return layerInfo
 }
