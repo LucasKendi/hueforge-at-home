@@ -22,3 +22,11 @@ export function prepareImages(source, destination) {
   destination.loadPixels()
   createCanvas(finalWidth + 20, source.height, existingCanvas)
 }
+
+export function loadImageAsync(filePath) {
+  return new Promise((resolve, reject) => {
+    let fileUrl = URL.createObjectURL(filePath);
+
+    loadImage(fileUrl, img => resolve(img), err => reject(err))
+  })
+}
