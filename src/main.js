@@ -1,5 +1,5 @@
 p5.disableFriendlyErrors = true; //small performance boost
-import { getLayerInfo } from './image_processor.js';
+import { getLayerInfo, prepareImages } from './image_processor.js';
 
 let img;
 let time;
@@ -7,14 +7,11 @@ let thresh;
 let copyData;
 let imgData;
 let range = 255;
-let layers = 30;
+let layers = 20;
 let layer = 1;
 let subd = parseInt(range / layers);
 let previousColor = [];
 let destColor = '';
-let existing = document.getElementById('existing-canvas');
-existing.getContext("2d", { willReadFrequently: true });
-let finalWidth = existing.parentElement.offsetWidth;
 let startTime;
 let colorsAt;
 let targetColor;
@@ -23,7 +20,6 @@ let origColor;
 let i;
 
 document.getElementById("fileInput").addEventListener("change", handleImage);
-
 window.preload = () => {
   name = "input_image.png"
   img = loadImage(name)
@@ -32,21 +28,13 @@ window.preload = () => {
 
 window.setup = () => {
   startTime = Date.now()
-  fixedImage();
+  prepareImages(img, copy);
   colorsAt = getLayerInfo();
   if (typeof img == 'undefined' || typeof copy == 'undefined' || !img.pixels || !copy.pixels) {
     noLoop()
   } else {
     loop();
   }
-}
-
-function fixedImage() {
-  img.resize(finalWidth / 2, 0);
-  copy.resize(finalWidth / 2, 0);
-  img.loadPixels()
-  copy.loadPixels()
-  createCanvas(finalWidth + 20, img.height, existing);
 }
 
 window.draw =() => {
@@ -75,7 +63,7 @@ window.draw =() => {
 
     if (currentValue >= thresh) {
       origColor = color(copyData[i], copyData[i + 1], copyData[i + 2])
-      color_layer(targetColor)
+      colorLayer(targetColor)
     }
   }
 
@@ -86,7 +74,7 @@ window.draw =() => {
   layer++
 }
 
-function color_layer(currentColor) {
+function colorLayer(currentColor) {
   if (previousColor[0] != currentColor[0]) {
     previousColor = currentColor
     destColor = color(currentColor[0])
@@ -103,12 +91,9 @@ function handleImage() {
     img = loadImage(URL.createObjectURL(file), () => {
       copy = createImage(img.width, img.height)
       copy.copy(img, 0, 0, img.width, img.height, 0, 0, copy.width, copy.height)
-      img.resize(finalWidth / 2, 0);
-      copy.resize(finalWidth / 2, 0);
-      img.loadPixels()
-      copy.loadPixels()
-      createCanvas(finalWidth, img.height, existing);
+      prepareImages(img, copy)
       layer = 1;
+      startTime = Date.now()
       loop()
     })
   } else {

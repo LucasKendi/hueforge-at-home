@@ -9,3 +9,16 @@ export function getLayerInfo() {
   });
   return colorsAt
 }
+
+export function prepareImages(source, destination) {
+  let existingCanvas = document.getElementById('existing-canvas')
+  existingCanvas.getContext("2d", { willReadFrequently: true })
+  let finalWidth = existingCanvas.parentElement.offsetWidth;
+
+  source.resize(finalWidth / 2, 0);
+  destination.resize(finalWidth / 2, 0);
+
+  source.loadPixels()
+  destination.loadPixels()
+  createCanvas(finalWidth + 20, source.height, existingCanvas)
+}
