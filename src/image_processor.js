@@ -5,7 +5,7 @@ export function getLayerInfo() {
     let color = element.querySelector("input.color").value
     let layer = element.querySelector("input.layer").value
     let opacity = element.querySelector("input.opacity").value
-    colorsAt[layer] = [color, opacity]
+    colorsAt[layer] = { "color": color, "opacity": opacity }
   });
   return colorsAt
 }
@@ -20,7 +20,7 @@ export function prepareImages(source, destination) {
 
   source.loadPixels()
   destination.loadPixels()
-  createCanvas(finalWidth + 20, source.height, existingCanvas)
+  createCanvas(finalWidth, source.height, existingCanvas)
 }
 
 export function loadImageAsync(filePath) {
@@ -29,4 +29,9 @@ export function loadImageAsync(filePath) {
 
     loadImage(fileUrl, img => resolve(img), err => reject(err))
   })
+}
+
+export function buildAndMixColors(baseColor, selectedColor) {
+  let mixColor = color(selectedColor["color"])
+  return mixbox.lerp(baseColor.levels, mixColor.levels, selectedColor["opacity"]) // color mix using mixbox for accurate pigment mixing results
 }
