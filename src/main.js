@@ -9,7 +9,7 @@ let inputColors = getLayerInfo();
 let layerColors = [];
 
 let gradientPreview = document.getElementById('gradient-preview').getContext("2d")
-let previewX = 450, previewY = 150;
+let previewX = 300, previewY = 150;
 
 window.handleImageInput = async (event) => {
   let path = event.target.files[0];
@@ -29,15 +29,16 @@ window.preload = () => {
 }
 
 window.setup = () => {
+  frameRate(120)
   startTime = Date.now()
-  currentLayer = 0;
+  currentLayer = 1;
   prepareImages(origImage, coloredImage);
 
   let currentColor = inputColors[Object.keys(inputColors)[0]]
-  layerColors.push(color(currentColor["color"]))
+  layerColors[0] = color(currentColor["color"]).levels
 
-  for (let i = 1; i <= layers; i++) {
-    if (inputColors[i]) { currentColor = inputColors[i] }
+  for (let i = 1; i < layers; i++) {
+    if (inputColors[i + 1]) { currentColor = inputColors[i + 1] }
 
     layerColors[i] = buildAndMixColors(layerColors[i - 1], currentColor)
   }
@@ -68,8 +69,7 @@ window.draw = () => {
   image(coloredImage, 0, 0)
   image(origImage, origImage.width, 0)
   currentLayer++
-
-  if (currentLayer > layers || !inputColors) {
+  if (currentLayer >= layers) {
     console.log("Total took " + (Date.now() - startTime) / 1000)
     noLoop();
     return;
