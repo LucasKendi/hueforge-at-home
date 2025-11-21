@@ -1,5 +1,5 @@
 p5.disableFriendlyErrors = true; //small performance boost
-import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors } from './image_processor.js';
+import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview } from './image_processor.js';
 
 let origImage, coloredImage, startTime;
 let layers = 15;
@@ -10,9 +10,6 @@ let layerColors = [];
 
 let gradientPreview = document.getElementById('gradient-preview').getContext("2d")
 let previewX = 450, previewY = 150;
-let step = parseInt(previewX / layers);
-
-let imgData, dataArray;
 
 window.handleImageInput = async (event) => {
   let path = event.target.files[0];
@@ -35,17 +32,18 @@ window.setup = () => {
   startTime = Date.now()
   currentLayer = 0;
   prepareImages(origImage, coloredImage);
-  imgData = gradientPreview.createImageData(previewX, previewY);
-  dataArray = imgData.data;
 
   let currentColor = inputColors[Object.keys(inputColors)[0]]
-  layerColors[0] = color(currentColor["color"])
+  layerColors.push(color(currentColor["color"]))
 
   for (let i = 1; i <= layers; i++) {
     if (inputColors[i]) { currentColor = inputColors[i] }
 
     layerColors[i] = buildAndMixColors(layerColors[i - 1], currentColor)
   }
+
+  let previewData = new ImageData(previewX, previewY);
+  gradientPreview.putImageData(buildPreview(previewData, layerColors), 0, 0)
 
   if (typeof origImage == 'undefined' || typeof coloredImage == 'undefined' || !origImage.pixels || !coloredImage.pixels) {
     noLoop()
@@ -66,22 +64,9 @@ window.draw = () => {
     }
   }
 
-  for (let x = 0; x < previewX; x++) {
-    if (currentLayer * step > x) { continue }
-    for (let y = 0; y < previewY; y++) {
-      let i = (y * previewX + x) * 4;
-
-      dataArray[i + 0] = layerColors[currentLayer][0];
-      dataArray[i + 1] = layerColors[currentLayer][1];
-      dataArray[i + 2] = layerColors[currentLayer][2];
-      dataArray[i + 3] = 255;
-    }
-  }
-
   coloredImage.updatePixels()
   image(coloredImage, 0, 0)
   image(origImage, origImage.width, 0)
-  gradientPreview.putImageData(imgData, 0, 0)
   currentLayer++
 
   if (currentLayer > layers || !inputColors) {

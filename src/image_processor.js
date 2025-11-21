@@ -36,12 +36,12 @@ export function buildAndMixColors(baseColor, selectedColor) {
   return mixbox.lerp(color(baseColor).levels, mixColor.levels, selectedColor["opacity"]) // color mix using mixbox for accurate pigment mixing results
 }
 
-export function paintPreview(image, colors) {
-  let data = image.data;
-  let ignore = parseInt(image.width/colors.length)
-  for (let i = 0; i < colors.lenght; i++) {
+export function buildPreview(image, colors) {
+  let step = parseInt(image.width / colors.length)
+
+  for (let i = 0; i < colors.length; i++) {
     for (let x = 0; x < image.width; x++) {
-      if (i * ignore > x) { continue }
+      if (i * step > x) { continue }
       for (let y = 0; y < image.height; y++) {
         let coord = (y * image.width + x) * 4;
         image.data[coord + 0] = colors[i][0]
@@ -51,5 +51,5 @@ export function paintPreview(image, colors) {
       }
     }
   }
-  return data
+  return image
 }
