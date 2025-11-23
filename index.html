@@ -23,6 +23,10 @@
       .input-group {
         @apply text-gray-100 m-4;
       }
+
+      .color-input {
+        @apply h-8 grid grid-cols-3;
+      }
     }
   </style>
 </head>
@@ -49,23 +53,39 @@
           <label for="default-range">Layer</label>
           <label for="default-range">Opacity 0-1</label>
         </li>
-        <li class="colorInput grid grid-cols-3 gap h-8">
-          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="black" />
+        <li class="color-input">
+          <div class="relative">
+            <input type="color" value="#000000" class="w-full h-full absolute z-10 opacity-0 cursor-pointer"
+              onchange="this.nextElementSibling.style.backgroundColor = this.value" />
+            <div class="rounded-l-lg absolute h-8 w-full bg-black border border-slate-700"></div>
+          </div>
           <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="1" />
           <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="1" />
         </li>
-        <li class="colorInput grid grid-cols-3 gap h-8">
-          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="blue" />
+        <li class="color-input">
+          <div class="relative">
+            <input type="color" value="#000000" class="w-full h-full absolute z-10 opacity-0 cursor-pointer"
+              onchange="this.nextElementSibling.style.backgroundColor = this.value" />
+            <div class="rounded-l-lg absolute h-full w-full bg-black border border-slate-700"></div>
+          </div>
           <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="2" />
           <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
         </li>
-        <li class="colorInput grid grid-cols-3 gap h-8">
-          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="yellow" />
+        <li class="color-input">
+          <div class="relative">
+            <input type="color" value="#000000" class="w-full h-full absolute z-10 opacity-0 cursor-pointer"
+              onchange="this.nextElementSibling.style.backgroundColor = this.value" />
+            <div class="rounded-l-lg absolute h-full w-full bg-black border border-slate-700"></div>
+          </div>
           <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="4" />
           <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
         </li>
-        <li class="colorInput grid grid-cols-3 gap h-8">
-          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="white" />
+        <li class="color-input">
+          <div class="relative">
+            <input type="color" value="#000000" class="w-full h-full absolute z-10 opacity-0 cursor-pointer"
+              onchange="this.nextElementSibling.style.backgroundColor = this.value" />
+            <div class="rounded-l-lg absolute h-full w-full bg-black border border-slate-700"></div>
+          </div>
           <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="11" />
           <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
         </li>

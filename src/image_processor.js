@@ -1,8 +1,8 @@
 export function getLayerInfo() {
   let colorsAt = {}
-  let items = document.querySelectorAll('li.colorInput');
+  let items = document.querySelectorAll('li.color-input');
   items.forEach(element => {
-    let color = element.querySelector("input.color").value
+    let color = element.querySelector("input").value
     let layer = element.querySelector("input.layer").value
     let opacity = element.querySelector("input.opacity").value
     colorsAt[layer] = { "color": color, "opacity": opacity }
