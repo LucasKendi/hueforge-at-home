@@ -48,3 +48,23 @@ export function buildPreview(image, colors) {
   }
   return image
 }
+
+export function createColorPicker(initialColor = "#ffffff", initialLayer = 1) {
+  const wrapper = document.createElement("li");
+  wrapper.className = "color-input gradient-btn hover:border-slate-600 rounded-lg divide-x divide-slate-500";
+  wrapper.innerHTML = `
+    <div class="w-1/3 relative">
+      <input type="color" value="${initialColor}" class="w-full h-full absolute z-10 opacity-0 cursor-pointer"
+        onchange="this.nextElementSibling.style.backgroundColor = this.value" />
+      <div class="rounded-l-lg absolute h-8 w-full bg-[${initialColor}] "></div>
+    </div>
+    <input class="w-1/3 layer px-2" type="number" value="${initialLayer}" />
+    <input class="w-1/3 opacity px-2" type="number" step="0.05" min="0" max="1" value="0.35" />
+    <div onclick="this.parentNode.remove()" class="content-center bg-slate-900 rounded-r-lg px-1.5">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </div>
+    `;
+  return wrapper
+}

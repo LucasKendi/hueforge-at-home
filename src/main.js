@@ -1,8 +1,8 @@
 p5.disableFriendlyErrors = true; //small performance boost
-import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview } from './image_processor.js';
+import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker } from './image_processor.js';
 
 let origImage, coloredImage, startTime;
-let layers = 15;
+let layers = 12;
 let currentLayer;
 let resolution;
 let layerColors;
@@ -86,5 +86,20 @@ document.getElementById("fileInput").addEventListener("change", handleImageInput
 document.getElementById("numLayers").addEventListener("input", (event) => {
   layers = event.target.value;
   document.getElementById("layerCount").innerHTML = layers;
+  setup();
+})
+
+const black = createColorPicker("#000000", 1)
+const red = createColorPicker("#0000ff", 2)
+const yellow = createColorPicker("#ffff00", 4)
+const white = createColorPicker("#ffffff", 9)
+
+const colorList = document.getElementById("colorList")
+colorList.appendChild(black)
+colorList.appendChild(red)
+colorList.appendChild(yellow)
+colorList.appendChild(white)
+
+colorList.addEventListener("click", () => {
   setup();
 })
