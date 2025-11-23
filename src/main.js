@@ -8,6 +8,9 @@ let resolution;
 let layerColors;
 let gradientPreview = document.getElementById('gradient-preview').getContext("2d")
 let previewX = 300, previewY = 150;
+let existingCanvas = document.getElementById('existing-canvas')
+existingCanvas.getContext("2d", { willReadFrequently: true })
+let finalWidth = existingCanvas.parentElement.offsetWidth;
 
 window.handleImageInput = async (event) => {
   let path = event.target.files[0];
@@ -28,25 +31,26 @@ window.preload = () => {
 
 window.setup = () => {
   frameRate(240)
-  startTime = Date.now()
-  currentLayer = 1;
-  prepareImages(origImage, coloredImage);
-  layerColors = [];
-  resolution = parseInt(255 / layers)
+  prepareImages(origImage, coloredImage, finalWidth);
+  createCanvas(finalWidth, origImage.height, existingCanvas)
+  image(origImage, 0, 0)
 
   let inputColors = getLayerInfo();
   let currentColor = inputColors[Object.keys(inputColors)[0]]
+  let previewData = new ImageData(previewX, previewY);
+
+  startTime = Date.now()
+  currentLayer = 1;
+  resolution = parseInt(255 / layers)
+  layerColors = [];
   layerColors[0] = color(currentColor["color"]).levels
 
   for (let i = 1; i < layers; i++) {
     if (inputColors[i + 1]) { currentColor = inputColors[i + 1] }
-
     layerColors[i] = buildAndMixColors(layerColors[i - 1], currentColor)
   }
 
-  let previewData = new ImageData(previewX, previewY);
   gradientPreview.putImageData(buildPreview(previewData, layerColors), 0, 0)
-  image(origImage, origImage.width, 0)
 
   if (typeof origImage == 'undefined' || typeof coloredImage == 'undefined' || !origImage.pixels || !coloredImage.pixels) {
     noLoop()
@@ -69,7 +73,7 @@ window.draw = () => {
   }
 
   coloredImage.updatePixels()
-  image(coloredImage, 0, 0)
+  image(coloredImage, coloredImage.width, 0)
   currentLayer++
   if (currentLayer > layers) {
     console.log("Total took " + (Date.now() - startTime) / 1000)
