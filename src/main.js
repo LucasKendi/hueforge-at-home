@@ -4,10 +4,8 @@ import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPr
 let origImage, coloredImage, startTime;
 let layers = 15;
 let currentLayer;
-let subdivisions = parseInt(255 / layers);
-let inputColors = getLayerInfo();
-let layerColors = [];
-
+let resolution;
+let layerColors;
 let gradientPreview = document.getElementById('gradient-preview').getContext("2d")
 let previewX = 300, previewY = 150;
 
@@ -29,11 +27,14 @@ window.preload = () => {
 }
 
 window.setup = () => {
-  frameRate(120)
+  frameRate(240)
   startTime = Date.now()
   currentLayer = 1;
   prepareImages(origImage, coloredImage);
+  layerColors = [];
+  resolution = parseInt(255 / layers)
 
+  let inputColors = getLayerInfo();
   let currentColor = inputColors[Object.keys(inputColors)[0]]
   layerColors[0] = color(currentColor["color"]).levels
 
@@ -45,6 +46,7 @@ window.setup = () => {
 
   let previewData = new ImageData(previewX, previewY);
   gradientPreview.putImageData(buildPreview(previewData, layerColors), 0, 0)
+  image(origImage, origImage.width, 0)
 
   if (typeof origImage == 'undefined' || typeof coloredImage == 'undefined' || !origImage.pixels || !coloredImage.pixels) {
     noLoop()
@@ -52,24 +54,24 @@ window.setup = () => {
 }
 
 window.draw = () => {
-  let threshold = parseInt(subdivisions * (currentLayer - 1)) // threshold to change pixels
+  let layerIndex = currentLayer - 1;
+  let threshold = resolution * layerIndex // threshold to change pixels
   let origPixels = origImage.pixels
 
   for (let i = 0; i < origPixels.length; i += 4) {
     if (origPixels[i + 3] == 0) continue; // skip transparent pixels on png files
     let currentValue = (origPixels[i] + origPixels[i + 1] + origPixels[i + 2]) / 3
     if (currentValue >= threshold) {
-      coloredImage.pixels[i + 0] = layerColors[currentLayer][0]
-      coloredImage.pixels[i + 1] = layerColors[currentLayer][1]
-      coloredImage.pixels[i + 2] = layerColors[currentLayer][2]
+      coloredImage.pixels[i + 0] = layerColors[layerIndex][0]
+      coloredImage.pixels[i + 1] = layerColors[layerIndex][1]
+      coloredImage.pixels[i + 2] = layerColors[layerIndex][2]
     }
   }
 
   coloredImage.updatePixels()
   image(coloredImage, 0, 0)
-  image(origImage, origImage.width, 0)
   currentLayer++
-  if (currentLayer >= layers) {
+  if (currentLayer > layers) {
     console.log("Total took " + (Date.now() - startTime) / 1000)
     noLoop();
     return;
@@ -77,3 +79,8 @@ window.draw = () => {
 }
 
 document.getElementById("fileInput").addEventListener("change", handleImageInput)
+document.getElementById("numLayers").addEventListener("input", (event) => {
+  layers = event.target.value;
+  document.getElementById("layerCount").innerHTML = layers;
+  setup();
+})

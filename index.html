@@ -1,58 +1,79 @@
-<html class="h-full bg-gray-800">
+<html class="h-full">
 
 <head>
   <title>Hueforge at home</title>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
   <script src="https://scrtwpns.com/mixbox.js"></script>
   <script type="module" src="src/main.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @layer components {
+      .background {
+        @apply bg-linear-to-b from-black to-slate-900 m-8 flex gap-8 font-semibold;
+      }
+
+      .content {
+        @apply p-4 bg-slate-800 rounded-lg border ring border-slate-700 border-t-slate-600;
+      }
+
+      .gradient-btn {
+        @apply bg-linear-to-b from-slate-700 to-slate-600 border border-slate-600 border-t-slate-500 border-l-slate-500 shadow-lg/20 hover:cursor-pointer duration-200 hover:border-slate-300 text-white rounded-lg;
+      }
+
+      .input-group {
+        @apply text-gray-100 m-4;
+      }
+    }
+  </style>
 </head>
 
-<body class="h-full">
-  <div class="min-h-full w-full mt-10">
-    <main class="m-8 flex gap-8 bg-gray-800 h-full">
-      <div class="px-5 py-8 bg-gray-200 w-1/3 grow border-4 border-neutral-500 rounded-lg flex flex-col content-center">
-        <input id="fileInput" type="file" accept="image/*"
-          class="w-1/2 border border-gray-300 text-gray-900 self-center file:bg-indigo-500 m-3 bg-white file:text-white file:p-2 file:border-0 text-sm rounded-lg"></input>
-        <div class="w-2/3 p-4 self-center bg-gray-200 m-4 rounded-lg border-2 border-gray-300">
-          <ul onchange="setup()" id="colorList" class="flex flex-col gap-2 text-gray-700 font-semibold">
-            <li class="grid grid-cols-3 font-medium text-gray-900 dark:text-white">
-              <label for="default-range">Color</label>
-              <label for="default-range">Layer</label>
-              <label for="default-range">Opacity 0-1</label>
-            </li>
-            <li class="colorInput grid grid-cols-3 gap h-8">
-              <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="black" />
-              <input class="layer px-2 bg-gray-50 border border-gray-300" value="1" />
-              <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="1" />
-            </li>
-            <li class="colorInput grid grid-cols-3 gap h-8">
-              <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="blue" />
-              <input class="layer px-2 bg-gray-50 border border-gray-300" value="2" />
-              <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
-            </li>
-            <li class="colorInput grid grid-cols-3 gap h-8">
-              <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="yellow" />
-              <input class="layer px-2 bg-gray-50 border border-gray-300" value="4" />
-              <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
-            </li>
-            <li class="colorInput grid grid-cols-3 gap h-8">
-              <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="white" />
-              <input class="layer px-2 bg-gray-50 border border-gray-300" value="11" />
-              <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
-            </li>
-          </ul>
-        </div>
-        <div class="self-center border-2 border-gray-500">
-          <canvas id="gradient-preview"></canvas>
-        </div>
-      </div>
-      <div class="p-5 bg-gray-200 w-3/4 grow border-4 border-gray-500 rounded-lg">
-        <div class="bg-gray-950 h-full">
-          <canvas id="existing-canvas"></canvas>
-        </div>
-      </div>
-    </main>
+<body class="background">
+  <div class="content w-1/5 p-4 flex flex-col content-center">
+    <div class="input-group flex">
+      <label class="gradient-btn w-full py-3 text-lg text-center">Choose Image
+        <input id="fileInput" type="file" accept="image/*" class="hidden"></input>
+      </label>
+    </div>
+    <div class="input-group">
+      <h3>Gradient Preview</h3>
+      <canvas class="w-full mt-2 self-center border border-slate-700 h-8 rounded-lg" id="gradient-preview"></canvas>
+    </div>
+    <div class="input-group">
+      <label for="numLayers">Number of Layers: <span id="layerCount">10</span></label></br>
+      <input class="w-full" type="range" id="numLayers" min="2" max="50" value="10" step="1">
+    </div>
+    <div class="input-group">
+      <ul onchange="window.setup()" id="colorList" class="flex flex-col gap-2 text-gray-900">
+        <li class="grid grid-cols-3 justify-center text-gray-100">
+          <label for="default-range">Color</label>
+          <label for="default-range">Layer</label>
+          <label for="default-range">Opacity 0-1</label>
+        </li>
+        <li class="colorInput grid grid-cols-3 gap h-8">
+          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="black" />
+          <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="1" />
+          <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="1" />
+        </li>
+        <li class="colorInput grid grid-cols-3 gap h-8">
+          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="blue" />
+          <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="2" />
+          <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
+        </li>
+        <li class="colorInput grid grid-cols-3 gap h-8">
+          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="yellow" />
+          <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="4" />
+          <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
+        </li>
+        <li class="colorInput grid grid-cols-3 gap h-8">
+          <input class="color px-2 bg-gray-50 rounded-l-lg border border-gray-300" value="white" />
+          <input class="layer px-2 bg-gray-50 border border-gray-300" type="number" value="11" />
+          <input class="opacity px-2 bg-gray-50 rounded-r-lg border border-gray-300" value="0.35" />
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="content w-4/5">
+    <canvas id="existing-canvas"></canvas>
   </div>
 </body>
 
