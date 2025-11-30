@@ -16,8 +16,12 @@
         @apply p-4 bg-slate-800 rounded-lg border ring border-slate-700 border-t-slate-600;
       }
 
-      .gradient-btn {
-        @apply bg-linear-to-b from-slate-700 to-slate-600 border border-slate-600 border-t-slate-500 border-l-slate-500 shadow-lg/20 hover:cursor-pointer duration-200 hover:border-slate-300 text-white rounded-lg;
+      .btn-primary {
+        @apply bg-linear-to-b from-slate-700 to-slate-600 border border-slate-600 border-t-slate-500 border-l-slate-500 shadow-lg/20 hover:cursor-pointer duration-200 hover:hue-rotate-0 hover:border-slate-300 text-white rounded-lg;
+      }
+
+      .gradient-bg {
+        @apply bg-linear-to-l/longer from-indigo-400 to-teal-400
       }
 
       .input-group {
@@ -34,7 +38,7 @@
 <body class="background">
   <div class="content w-1/4 p-4 flex flex-col content-center">
     <div class="input-group flex">
-      <label class="gradient-btn w-full py-3 text-lg text-center">Choose Image
+      <label class="btn-primary w-full py-3 text-lg text-center">Choose Image
         <input id="fileInput" type="file" accept="image/*" class="hidden"></input>
       </label>
     </div>
@@ -55,6 +59,13 @@
           <label class="w-8"></label>
         </li>
       </ul>
+      <button id="addColorButton" onclick="addColorToList()" class="w-full gradient-bg rounded-xl p-0.5 h-9 text-lg mt-2">
+        <div class="btn-primary border-0 h-full">
+          <div class="gradient-bg saturate-150 bg-clip-text text-transparent">
+            Add color layer
+          </div>
+        </div>
+      </button>
     </div>
   </div>
   <div class="content w-3/4">

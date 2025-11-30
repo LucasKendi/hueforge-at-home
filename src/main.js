@@ -1,5 +1,5 @@
 p5.disableFriendlyErrors = true; //small performance boost
-import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker } from './image_processor.js';
+import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker, addColorToList } from './image_processor.js';
 
 let origImage, coloredImage, startTime;
 let layers = 12;
@@ -11,6 +11,7 @@ let previewX = 300, previewY = 150;
 let existingCanvas = document.getElementById('existing-canvas')
 existingCanvas.getContext("2d", { willReadFrequently: true })
 let finalWidth = existingCanvas.parentElement.offsetWidth;
+window.addColorToList = addColorToList
 
 window.handleImageInput = async (event) => {
   let path = event.target.files[0];

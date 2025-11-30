@@ -51,7 +51,7 @@ export function buildPreview(image, colors) {
 
 export function createColorPicker(initialColor = "#ffffff", initialLayer = 1) {
   const wrapper = document.createElement("li");
-  wrapper.className = "color-input gradient-btn hover:border-slate-600 rounded-lg divide-x divide-slate-500";
+  wrapper.className = "color-input btn-primary hover:border-slate-600 rounded-lg divide-x divide-slate-500";
   wrapper.innerHTML = `
     <div class="w-1/3 relative">
       <input type="color" value="${initialColor}" class="w-full h-full absolute z-10 opacity-0 cursor-pointer"
@@ -67,4 +67,10 @@ export function createColorPicker(initialColor = "#ffffff", initialLayer = 1) {
     </div>
     `;
   return wrapper
+}
+
+export function addColorToList() {
+  const colorList = document.getElementById("colorList")
+  let colorPicker = createColorPicker();
+  colorList.appendChild(colorPicker)
 }
