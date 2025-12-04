@@ -1,10 +1,11 @@
 # hueforge-at-home
-Basic javascript implementation of layer-color mixing for 3d printing. Now with an rough interface!
-![image](https://github.com/user-attachments/assets/bf38894c-5e62-4d08-8fe2-e98ef53328e7)
+Basic javascript implementation of layer-color mixing for 3d printing
 
-It does not generate stl files from images (like hueforge actually does), so I recommend converting your images to stl using something like https://3dp.rocks/lithophane/
+<img width="2490" height="1285" alt="image" src="https://github.com/user-attachments/assets/d1dd2be7-c7ae-4b75-8f3d-24e888fae012" />
 
-## Running on Windows with VS code:
+It does not generate stl files from images (like hueforge actually does), so I recommend converting your images to stl using something like https://3dp.rocks/lithophane/ or opening your images directly into your slicer if the slicer supports it.
+
+## Running with VS code:
   - Download this project and open it on VS Code
   - Add the VS Code [Live Server extension](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
  - Click on the `Go Live` button on the bottom right corner
