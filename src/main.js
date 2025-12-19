@@ -1,16 +1,20 @@
 p5.disableFriendlyErrors = true; //small performance boost
-import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker, addColorToList } from './image_processor.js';
+import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker, addColorToList, getLightness, computeHueHistogram, drawHistogram } from './image_processor.js';
 
-let origImage, coloredImage, startTime;
-let layers = 12;
-let currentLayer;
-let resolution;
-let layerColors;
-let gradientPreview = document.getElementById('gradient-preview').getContext("2d")
-let previewX = 300, previewY = 150;
+let layers = document.getElementById("layerCount").innerHTML;
+let hueSegment = document.getElementById("hueSegment").value;
+let hueOffset = parseInt(document.getElementById("hueOffset").value);
+let segmentFlag = document.getElementById("segmentFlag").checked;
+let gradientPreview = document.getElementById('gradientPreview').getContext("2d")
+let imageHistogram = document.getElementById('imageHistogram').getContext("2d")
 let existingCanvas = document.getElementById('existing-canvas')
 existingCanvas.getContext("2d", { willReadFrequently: true })
 let finalWidth = existingCanvas.parentElement.offsetWidth;
+
+let origImage, coloredImage, startTime;
+let minLightness, maxLightness;
+let currentLayer, layerRange, layerColors, histogram;
+let previewX = 300, previewY = 150;
 window.addColorToList = addColorToList
 
 window.handleImageInput = async (event) => {
@@ -32,17 +36,22 @@ window.preload = () => {
 
 window.setup = () => {
   frameRate(240)
-  prepareImages(origImage, coloredImage, finalWidth);
+  prepareImages(origImage, coloredImage, finalWidth - 20);
+  imageHistogram.clearRect(0, 0, canvas.width, canvas.height);
+  histogram = computeHueHistogram(origImage, hueOffset)
   createCanvas(finalWidth, origImage.height, existingCanvas)
   image(origImage, 0, 0)
 
   let inputColors = getLayerInfo();
   let currentColor = inputColors[Object.keys(inputColors)[0]]
   let previewData = new ImageData(previewX, previewY);
+  let lightnessRange = getLightness(origImage)
 
   startTime = Date.now()
   currentLayer = 1;
-  resolution = parseInt(255 / layers)
+  minLightness = lightnessRange[0]
+  maxLightness = lightnessRange[1]
+  layerRange = (maxLightness - minLightness) / layers
   layerColors = [];
   layerColors[0] = color(currentColor["color"]).levels
 
@@ -60,12 +69,26 @@ window.setup = () => {
 
 window.draw = () => {
   let layerIndex = currentLayer - 1;
-  let threshold = resolution * layerIndex // threshold to change pixels
+  let threshold = layerRange * layerIndex + minLightness // threshold to change pixels
   let origPixels = origImage.pixels
 
   for (let i = 0; i < origPixels.length; i += 4) {
     if (origPixels[i + 3] == 0) continue; // skip transparent pixels on png files
-    let currentValue = (origPixels[i] + origPixels[i + 1] + origPixels[i + 2]) / 3
+    let currentValue = 0.2126 * origPixels[i] + 0.7152 * origPixels[i + 1] + 0.0722 * origPixels[i + 2];
+
+    if (segmentFlag) {
+      let currentPixel = color(origPixels[i + 0], origPixels[i + 1], origPixels[i + 2])
+      let currentHue = floor(hue(currentPixel))
+      let rotatedHue = (currentHue + hueOffset) % 360
+      if (saturation(currentPixel) > 10 && lightness(currentPixel) > 10) {
+        if (rotatedHue < hueSegment) {
+          currentValue = map(currentValue, 0, 255, 0, 122)
+        } else {
+          currentValue = map(currentValue, 0, 255, 123, 255)
+        }
+      }
+    }
+
     if (currentValue >= threshold) {
       coloredImage.pixels[i + 0] = layerColors[layerIndex][0]
       coloredImage.pixels[i + 1] = layerColors[layerIndex][1]
@@ -75,6 +98,8 @@ window.draw = () => {
 
   coloredImage.updatePixels()
   image(coloredImage, coloredImage.width, 0)
+  drawHistogram(imageHistogram, histogram, hueOffset)
+
   currentLayer++
   if (currentLayer > layers) {
     console.log("Total took " + (Date.now() - startTime) / 1000)
@@ -84,16 +109,34 @@ window.draw = () => {
 }
 
 document.getElementById("fileInput").addEventListener("change", handleImageInput)
+const layerCount = document.getElementById("layerCount")
+const segmentCount = document.getElementById("hueSegment")
 document.getElementById("numLayers").addEventListener("input", (event) => {
   layers = event.target.value;
-  document.getElementById("layerCount").innerHTML = layers;
+  layerCount.innerHTML = layers;
+  setup();
+})
+
+document.getElementById("hueSegment").addEventListener("input", (event) => {
+  hueSegment = parseInt(event.target.value);
+  setup();
+})
+
+
+document.getElementById("hueOffset").addEventListener("input", (event) => {
+  hueOffset = parseInt(event.target.value);
+  setup();
+})
+
+document.getElementById("segmentFlag").addEventListener("input", (event) => {
+  segmentFlag = event.target.checked;
   setup();
 })
 
 const black = createColorPicker("#000000", 1)
 const red = createColorPicker("#0000ff", 2)
-const yellow = createColorPicker("#ffff00", 4)
-const white = createColorPicker("#ffffff", 9)
+const yellow = createColorPicker("#e9e91c", 4)
+const white = createColorPicker("#ffffff", 12)
 
 const colorList = document.getElementById("colorList")
 colorList.appendChild(black)

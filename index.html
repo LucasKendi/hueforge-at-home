@@ -2,7 +2,7 @@
 
 <head>
   <title>Hueforge at home</title>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.js"></script>
   <script src="https://scrtwpns.com/mixbox.js"></script>
   <script type="module" src="src/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -43,12 +43,12 @@
       </label>
     </div>
     <div class="input-group">
-      <h3>Gradient Preview</h3>
-      <canvas class="w-full mt-2 self-center border border-slate-700 h-8 rounded-lg" id="gradient-preview"></canvas>
+      <label for="numLayers">Number of Layers: <span id="layerCount">16</span></label></br>
+      <input class="w-full" type="range" id="numLayers" min="2" max="100" value="16" step="1">
     </div>
     <div class="input-group">
-      <label for="numLayers">Number of Layers: <span id="layerCount">10</span></label></br>
-      <input class="w-full" type="range" id="numLayers" min="2" max="50" value="10" step="1">
+      <h3>Gradient Preview</h3>
+      <canvas class="w-full mt-2 self-center border border-slate-700 h-8 rounded-lg" id="gradientPreview"></canvas>
     </div>
     <div class="input-group">
       <ul onchange="setup()" id="colorList" class="flex flex-col gap-2 text-gray-900">
@@ -66,6 +66,20 @@
           </div>
         </div>
       </button>
+    </div>
+    <div class="input-group">
+      <h3>Histogram</h3>
+      <canvas class="w-full mt-2 self-center border border-slate-700 h-64" id="imageHistogram"></canvas>
+      <input class="w-full" type="range" id="hueSegment" min="0" max="360" value="180" step="1">
+      <label for="hueSegment">Hue segment <span id="">180</span></label></br>
+      <input class="w-full" type="range" id="hueOffset" min="0" max="360" value="40" step="1">
+      <label for="hueOffset">Hue offset <span id="">40</span></label></br>
+    </div>
+    <div class="input-group">
+      <div class="flex items-center">
+        <input id="segmentFlag" type="checkbox" class="w-6 h-6 rounded-md">
+        <label for="segmentFlag" class="select-none ms-2 text-heading">Segment</label>
+      </div>
     </div>
   </div>
   <div class="content w-3/4">
