@@ -2,7 +2,7 @@ p5.disableFriendlyErrors = true; //small performance boost
 import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker, addColorToList, getLightness, computeHueHistogram, drawHistogram } from './image_processor.js';
 
 let layers = document.getElementById("layerCount").innerHTML;
-let hueSegment = document.getElementById("hueSegment").value;
+let hueSegment = parseInt(document.getElementById("hueSegment").value);
 let hueOffset = parseInt(document.getElementById("hueOffset").value);
 let segmentFlag = document.getElementById("segmentFlag").checked;
 let gradientPreview = document.getElementById('gradientPreview').getContext("2d")
@@ -81,10 +81,9 @@ window.draw = () => {
       let currentHue = floor(hue(currentPixel))
       let rotatedHue = (currentHue + hueOffset) % 360
       if (saturation(currentPixel) > 10 && lightness(currentPixel) > 10) {
-        if (rotatedHue < hueSegment) {
-          currentValue = map(currentValue, 0, 255, 0, 122)
-        } else {
-          currentValue = map(currentValue, 0, 255, 123, 255)
+        currentValue /= 2
+        if (rotatedHue > hueSegment) {
+          currentValue += 128
         }
       }
     }
