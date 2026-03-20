@@ -101,7 +101,7 @@ export function computeHueHistogram(img, hueOffset) {
     h = (h + hueOffset) % 360
 
     let bin = floor(map(h, 0, 360, 0, BIN_COUNT));
-    if (saturation(c) > 10 && lightness(c) > 10) {
+    if (saturation(c) > 5 && lightness(c) > 5) {
       hueBin[bin]++;
     }
   }

@@ -80,12 +80,11 @@ window.draw = () => {
       let currentPixel = color(origPixels[i + 0], origPixels[i + 1], origPixels[i + 2])
       let currentHue = floor(hue(currentPixel))
       let rotatedHue = (currentHue + hueOffset) % 360
-      if (saturation(currentPixel) > 10 && lightness(currentPixel) > 10) {
-        currentValue /= 2
-        if (rotatedHue > hueSegment) {
-          currentValue += 128
-        }
-      }
+      let w = 100;
+      let dh = hueSegment - rotatedHue;
+      let blend = constrain(map(dh, 0, w, 1, 0), 0, 1);
+
+      currentValue = lerp(currentValue / 2, (currentValue / 2) + 128, blend)
     }
 
     if (currentValue >= threshold) {
@@ -133,8 +132,8 @@ document.getElementById("segmentFlag").addEventListener("input", (event) => {
 })
 
 const black = createColorPicker("#000000", 1)
-const red = createColorPicker("#0000ff", 2)
-const yellow = createColorPicker("#e9e91c", 4)
+const red = createColorPicker("#ff0000", 2)
+const yellow = createColorPicker("#ffa742", 6)
 const white = createColorPicker("#ffffff", 12)
 
 const colorList = document.getElementById("colorList")
