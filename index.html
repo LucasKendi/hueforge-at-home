@@ -1,15 +1,15 @@
-<html class="h-full">
+<html>
 
 <head>
   <title>Hueforge at home</title>
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.0/lib/p5.js"></script>
   <script src="https://scrtwpns.com/mixbox.js"></script>
   <script type="module" src="src/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style type="text/tailwindcss">
     @layer components {
       .background {
-        @apply bg-linear-to-b from-black to-slate-900 m-8 flex gap-8 font-semibold;
+        @apply bg-fixed bg-linear-to-b from-black to-slate-900 p-8 flex gap-8 font-semibold;
       }
 
       .content {
@@ -25,7 +25,7 @@
       }
 
       .input-group {
-        @apply text-gray-100 m-4;
+        @apply text-gray-100 m-2;
       }
 
       .color-input {
@@ -36,19 +36,19 @@
 </head>
 
 <body class="background">
-  <div class="content w-1/4 p-4 flex flex-col content-center">
+  <div class="content overflow-auto w-1/4 p-2 flex flex-col content-center">
     <div class="input-group flex">
-      <label class="btn-primary w-full py-3 text-lg text-center">Choose Image
+      <label class="btn-primary w-full py-2 text-md text-center">Choose Image
         <input id="fileInput" type="file" accept="image/*" class="hidden"></input>
       </label>
     </div>
     <div class="input-group">
-      <h3>Gradient Preview</h3>
-      <canvas class="w-full mt-2 self-center border border-slate-700 h-8 rounded-lg" id="gradient-preview"></canvas>
+      <label for="numLayers">Number of Layers: <span id="layerCount">16</span></label></br>
+      <input class="w-full" type="range" id="numLayers" min="2" max="100" value="16" step="1">
     </div>
     <div class="input-group">
-      <label for="numLayers">Number of Layers: <span id="layerCount">10</span></label></br>
-      <input class="w-full" type="range" id="numLayers" min="2" max="50" value="10" step="1">
+      <h3>Gradient Preview</h3>
+      <canvas class="w-full mt-2 self-center border border-slate-700 h-8 rounded-lg" id="gradientPreview"></canvas>
     </div>
     <div class="input-group">
       <ul onchange="setup()" id="colorList" class="flex flex-col gap-2 text-gray-900">
@@ -66,6 +66,21 @@
           </div>
         </div>
       </button>
+      <button id="download-bw" class="w-full btn-primary p-2 mt-2"></button>
+    </div>
+    <div class="input-group">
+      <h3>Histogram</h3>
+      <canvas class="w-full mt-2 self-center border border-slate-700 h-64" id="imageHistogram"></canvas>
+      <div class="flex my-2 peer items-center">
+        <input id="segmentFlag" type="checkbox" class="w-6 h-6 rounded-md">
+        <label for="segmentFlag" class="select-none ms-2 text-heading">Enable two gradients</label>
+      </div>
+      <div class="peer-has-checked:block hidden">
+        <label for="hueSegment">Hue segment <span id="segmentAngle">180</span></label></br>
+        <input class="w-full" type="range" id="hueSegment" min="0" max="360" value="180" step="1">
+        <label for="hueOffset">Hue offset <span id="offsetAngle">40</span></label></br>
+        <input class="w-full" type="range" id="hueOffset" min="0" max="360" value="40" step="1">
+      </div>
     </div>
   </div>
   <div class="content w-3/4">

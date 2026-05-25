@@ -1,3 +1,5 @@
+const BIN_COUNT = 120;
+
 export function getLayerInfo() {
   let colorsAt = {}
   let items = document.querySelectorAll('li.color-input');
@@ -29,6 +31,22 @@ export function loadImageAsync(filePath) {
 export function buildAndMixColors(baseColor, selectedColor) {
   let mixColor = color(selectedColor["color"])
   return mixbox.lerp(color(baseColor).levels, mixColor.levels, selectedColor["opacity"]) // color mix using mixbox for accurate pigment mixing results
+}
+
+export function getLightness(image) {
+  let minLightness = 255;
+  let maxLightness = 0;
+  for (let i = 0; i < image.pixels.length; i++) {
+    let r = image.pixels[i + 0];
+    let g = image.pixels[i + 1];
+    let b = image.pixels[i + 2];
+    let currentLightness = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+    if (currentLightness < minLightness) { minLightness = currentLightness }
+    if (currentLightness > maxLightness) { maxLightness = currentLightness }
+  }
+
+  return [minLightness, maxLightness]
 }
 
 export function buildPreview(image, colors) {
@@ -73,4 +91,44 @@ export function addColorToList() {
   const colorList = document.getElementById("colorList")
   let colorPicker = createColorPicker();
   colorList.appendChild(colorPicker)
+}
+
+export function computeHueHistogram(img, hueOffset) {
+  let hueBin = new Array(BIN_COUNT).fill(0);
+  for (let i = 0; i < img.pixels.length; i += 4) {
+    let c = color(img.pixels[i], img.pixels[i + 1], img.pixels[i + 2]);
+    let h = hue(c);
+    h = (h + hueOffset) % 360
+
+    let bin = floor(map(h, 0, 360, 0, BIN_COUNT));
+    if (saturation(c) > 5 && lightness(c) > 5) {
+      hueBin[bin]++;
+    }
+  }
+  return hueBin
+}
+
+export function drawHistogram(imageHistogram, histogram, hueOffset) {
+  colorMode(HSB, 360, 100, 100);
+  let maxCount = max(histogram);
+  let barWidth = imageHistogram.canvas.width / histogram.length;
+  for (let h = 0; h < histogram.length; h++) {
+    let barHeight = map(histogram[h], 0, maxCount, 0, imageHistogram.canvas.height - 10);
+    let mappedHue = map(h, 0, BIN_COUNT, 0, 360)
+    mappedHue = floor((mappedHue + 360 - hueOffset) % 360)
+    imageHistogram.fillStyle = color(mappedHue, 100, 100);
+    imageHistogram.fillRect(h * barWidth, imageHistogram.canvas.height - barHeight, barWidth, barHeight);
+  }
+  colorMode(RGB);
+}
+
+export function saveBnW(image) {
+  let a = document.createElement("a");
+  image.filter(GRAY)
+  a.href = image.canvas.toDataURL("image/png");
+  a.textContent = "Export black & white gradients"
+  a.download = "my-image.png"; // filename
+  let downloadBW = document.getElementById("download-bw")
+  downloadBW.innerHTML = "";
+  downloadBW.appendChild(a);
 }
