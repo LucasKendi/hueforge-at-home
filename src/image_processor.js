@@ -121,3 +121,14 @@ export function drawHistogram(imageHistogram, histogram, hueOffset) {
   }
   colorMode(RGB);
 }
+
+export function saveBnW(image) {
+  let a = document.createElement("a");
+  image.filter(GRAY)
+  a.href = image.canvas.toDataURL("image/png");
+  a.textContent = "Export black & white gradients"
+  a.download = "my-image.png"; // filename
+  let downloadBW = document.getElementById("download-bw")
+  downloadBW.innerHTML = "";
+  downloadBW.appendChild(a);
+}

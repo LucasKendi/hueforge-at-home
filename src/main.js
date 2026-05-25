@@ -1,5 +1,5 @@
 p5.disableFriendlyErrors = true; //small performance boost
-import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker, addColorToList, getLightness, computeHueHistogram, drawHistogram } from './image_processor.js';
+import { getLayerInfo, prepareImages, loadImageAsync, buildAndMixColors, buildPreview, createColorPicker, addColorToList, getLightness, computeHueHistogram, drawHistogram, saveBnW } from './image_processor.js';
 
 let layers = document.getElementById("layerCount").innerHTML;
 let hueSegment = parseInt(document.getElementById("hueSegment").value);
@@ -102,11 +102,13 @@ window.draw = () => {
   if (currentLayer > layers) {
     console.log("Total took " + (Date.now() - startTime) / 1000)
     noLoop();
+    saveBnW(coloredImage)
     return;
   }
 }
 
 document.getElementById("fileInput").addEventListener("change", handleImageInput)
+
 const layerCount = document.getElementById("layerCount")
 const segmentCount = document.getElementById("hueSegment")
 document.getElementById("numLayers").addEventListener("input", (event) => {
@@ -115,14 +117,17 @@ document.getElementById("numLayers").addEventListener("input", (event) => {
   setup();
 })
 
+const segmentAngle = document.getElementById("segmentAngle")
 document.getElementById("hueSegment").addEventListener("input", (event) => {
   hueSegment = parseInt(event.target.value);
+  segmentAngle.innerHTML = hueSegment
   setup();
 })
 
-
+const offsetAngle = document.getElementById("offsetAngle")
 document.getElementById("hueOffset").addEventListener("input", (event) => {
   hueOffset = parseInt(event.target.value);
+  offsetAngle.innerHTML = hueOffset
   setup();
 })
 
