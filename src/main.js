@@ -13,7 +13,7 @@ let finalWidth = existingCanvas.parentElement.offsetWidth;
 
 let origImage, coloredImage, startTime;
 let minLightness, maxLightness;
-let currentLayer, layerRange, layerColors, histogram;
+let layerRange, layerColors, histogram;
 let previewX = 300, previewY = 150;
 window.addColorToList = addColorToList
 
@@ -35,7 +35,6 @@ window.preload = () => {
 }
 
 window.setup = () => {
-  frameRate(240)
   prepareImages(origImage, coloredImage, finalWidth - 20);
   imageHistogram.clearRect(0, 0, canvas.width, canvas.height);
   histogram = computeHueHistogram(origImage, hueOffset)
@@ -48,10 +47,8 @@ window.setup = () => {
   let lightnessRange = getLightness(origImage)
 
   startTime = Date.now()
-  currentLayer = 1;
   minLightness = lightnessRange[0]
   maxLightness = lightnessRange[1]
-  layerRange = (maxLightness - minLightness) / layers
   layerColors = [];
   layerColors[0] = color(currentColor["color"]).levels
 
@@ -61,15 +58,12 @@ window.setup = () => {
   }
 
   gradientPreview.putImageData(buildPreview(previewData, layerColors), 0, 0)
-
   if (typeof origImage == 'undefined' || typeof coloredImage == 'undefined' || !origImage.pixels || !coloredImage.pixels) {
     noLoop()
   } else { loop() }
 }
 
 window.draw = () => {
-  let layerIndex = currentLayer - 1;
-  let threshold = layerRange * layerIndex + minLightness // threshold to change pixels
   let origPixels = origImage.pixels
 
   for (let i = 0; i < origPixels.length; i += 4) {
@@ -80,31 +74,25 @@ window.draw = () => {
       let currentPixel = color(origPixels[i + 0], origPixels[i + 1], origPixels[i + 2])
       let currentHue = floor(hue(currentPixel))
       let rotatedHue = (currentHue + hueOffset) % 360
-      let w = 100;
       let dh = hueSegment - rotatedHue;
-      let blend = constrain(map(dh, 0, w, 1, 0), 0, 1);
+      let blend = constrain(map(dh, -20, 20, 1, 0), 0, 1);
 
       currentValue = lerp(currentValue / 2, (currentValue / 2) + 128, blend)
     }
 
-    if (currentValue >= threshold) {
-      coloredImage.pixels[i + 0] = layerColors[layerIndex][0]
-      coloredImage.pixels[i + 1] = layerColors[layerIndex][1]
-      coloredImage.pixels[i + 2] = layerColors[layerIndex][2]
-    }
+    let colorIndex = constrain(parseInt(map(currentValue, minLightness, maxLightness, 0, layers - 1)), 0, layers - 1)
+    coloredImage.pixels[i + 0] = layerColors[colorIndex][0]
+    coloredImage.pixels[i + 1] = layerColors[colorIndex][1]
+    coloredImage.pixels[i + 2] = layerColors[colorIndex][2]
   }
 
   coloredImage.updatePixels()
   image(coloredImage, coloredImage.width, 0)
   drawHistogram(imageHistogram, histogram, hueOffset)
 
-  currentLayer++
-  if (currentLayer > layers) {
-    console.log("Total took " + (Date.now() - startTime) / 1000)
-    noLoop();
-    saveBnW(coloredImage)
-    return;
-  }
+  console.log("Total took " + (Date.now() - startTime) / 1000)
+  noLoop();
+  saveBnW(coloredImage)
 }
 
 document.getElementById("fileInput").addEventListener("change", handleImageInput)
