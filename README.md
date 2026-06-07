@@ -1,7 +1,6 @@
 # hueforge-at-home
 Basic javascript implementation of layer-color mixing for 3d printing
-
-<img width="2490" height="1285" alt="image" src="https://github.com/user-attachments/assets/d1dd2be7-c7ae-4b75-8f3d-24e888fae012" />
+<img width="2560" height="1307" alt="image" src="https://github.com/user-attachments/assets/1495c66a-d2a0-4a32-9599-cff00cdd6521" />
 
 It does not generate stl files from images (like hueforge actually does), so I recommend converting your images to stl using something like https://3dp.rocks/lithophane/ or opening your images directly into your slicer if the slicer supports it.
 
