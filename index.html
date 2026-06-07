@@ -44,7 +44,7 @@
     </div>
     <div class="input-group">
       <label for="numLayers">Number of Layers: <span id="layerCount">16</span></label></br>
-      <input id="numLayers" class="w-full" type="range" data-state="layers" data-output="layerCount"min="2" max="100" value="16" step="1">
+      <input id="numLayers" class="w-full" type="range" data-state="layers" data-output="layerCount" min="2" max="100" value="16" step="1">
     </div>
     <div class="input-group">
       <h3>Gradient Preview</h3>
@@ -82,6 +82,8 @@
         <input id="hueSegment" class="w-full" type="range" data-state="hueSegment" data-output="segmentAngle" min="0" max="360" value="180" step="1">
         <label for="hueOffset">Hue offset <span id="offsetAngle">40</span></label></br>
         <input id="hueOffset" class="w-full" type="range" data-state="hueOffset" data-output="offsetAngle" min="0" max="360" value="40" step="1">
+        <label for="blendFactor">Mix Factor <span id="factor">20</span></label></br>
+        <input id="blendFactor" class="w-full" type="range" data-state="blendFactor" data-output="factor" min="1" max="200" value="20" step="1">
       </div>
     </div>
   </div>

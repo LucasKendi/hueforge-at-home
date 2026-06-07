@@ -5,6 +5,7 @@ const state = {
   layers: document.getElementById("layerCount").innerHTML,
   hueSegment: parseInt(document.getElementById("hueSegment").value),
   hueOffset: parseInt(document.getElementById("hueOffset").value),
+  blendFactor: parseInt(document.getElementById("blendFactor").value),
 }
 
 let segmentFlag = document.getElementById("segmentFlag").checked;
@@ -65,9 +66,8 @@ window.draw = () => {
       let currentHue = floor(hue(currentPixel))
       let rotatedHue = (currentHue + state.hueOffset) % 360
       let dh = state.hueSegment - rotatedHue;
-      let mixFactor = constrain(map(dh, -20, 20, 1, 0), 0, 1);
-
-      currentValue = lerp(currentValue / 2, (currentValue / 2) + 128, mixFactor)
+      let blending = constrain(map(dh, -state.blendFactor, state.blendFactor, 1, 0), 0, 1);
+      currentValue = lerp(currentValue / 2, (currentValue / 2) + 128, blending)
     }
 
     let colorIndex = constrain(parseInt(map(currentValue, minLightness, maxLightness, 0, state.layers - 1)), 0, state.layers - 1)
