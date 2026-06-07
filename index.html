@@ -44,7 +44,7 @@
     </div>
     <div class="input-group">
       <label for="numLayers">Number of Layers: <span id="layerCount">16</span></label></br>
-      <input class="w-full" type="range" id="numLayers" min="2" max="100" value="16" step="1">
+      <input id="numLayers" class="w-full" type="range" data-state="layers" data-output="layerCount"min="2" max="100" value="16" step="1">
     </div>
     <div class="input-group">
       <h3>Gradient Preview</h3>
@@ -66,7 +66,9 @@
           </div>
         </div>
       </button>
-      <button id="download-bw" class="w-full btn-primary p-2 mt-2"></button>
+      <button id="download-bw" class="w-full btn-primary p-2 mt-2">
+        Export black & white gradients
+      </button>
     </div>
     <div class="input-group">
       <h3>Histogram</h3>
@@ -77,9 +79,9 @@
       </div>
       <div class="peer-has-checked:block hidden">
         <label for="hueSegment">Hue segment <span id="segmentAngle">180</span></label></br>
-        <input class="w-full" type="range" id="hueSegment" min="0" max="360" value="180" step="1">
+        <input id="hueSegment" class="w-full" type="range" data-state="hueSegment" data-output="segmentAngle" min="0" max="360" value="180" step="1">
         <label for="hueOffset">Hue offset <span id="offsetAngle">40</span></label></br>
-        <input class="w-full" type="range" id="hueOffset" min="0" max="360" value="40" step="1">
+        <input id="hueOffset" class="w-full" type="range" data-state="hueOffset" data-output="offsetAngle" min="0" max="360" value="40" step="1">
       </div>
     </div>
   </div>
