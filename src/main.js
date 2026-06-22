@@ -13,11 +13,13 @@ let gradientCanvas = document.getElementById('gradientPreview')
 let histogramCanvas = document.getElementById('imageHistogram')
 let existingCanvas = document.getElementById('existing-canvas')
 let finalWidth = existingCanvas.parentElement.offsetWidth;
+let finalHeight = existingCanvas.parentElement.offsetHeight;
 
 let origImage, coloredImage;
-let minLightness, maxLightness;
-let layerRange, layerColors, histogram;
+let lightnessRange, minLightness, maxLightness;
+let layerRange, layerColors, histogram, inputColors;
 window.addColorToList = addColorToList
+window.updateUI = updateUI
 
 window.handleImageInput = async (event) => {
   let path = event.target.files[0];
@@ -37,20 +39,14 @@ window.preload = () => {
 }
 
 window.setup = () => {
-  prepareImages(origImage, coloredImage, finalWidth - 20);
-  createCanvas(finalWidth, origImage.height, existingCanvas)
-  image(origImage, 0, 0)
-  histogram = computeHueHistogram(origImage, state.hueOffset)
+  setupImages();
+  updateUI();
 }
 
 window.draw = () => {
   let origPixels = origImage.pixels
-  let inputColors = getLayerInfo();
   let currentColor = inputColors[Object.keys(inputColors)[0]]
-  let lightnessRange = getLightness(origImage)
 
-  minLightness = lightnessRange[0]
-  maxLightness = lightnessRange[1]
   layerColors = [color(currentColor["color"])];
   for (let i = 1; i < state.layers; i++) {
     if (inputColors[i + 1]) { currentColor = inputColors[i + 1] }
@@ -63,7 +59,7 @@ window.draw = () => {
 
     if (segmentFlag) {
       let currentPixel = color(origPixels[i + 0], origPixels[i + 1], origPixels[i + 2])
-      let currentHue = floor(hue(currentPixel))
+      let currentHue = hue(currentPixel)
       let rotatedHue = (currentHue + state.hueOffset) % 360
       let dh = state.hueSegment - rotatedHue;
       let blending = constrain(map(dh, -state.blendFactor, state.blendFactor, 1, 0), 0, 1);
@@ -80,7 +76,23 @@ window.draw = () => {
   image(coloredImage, coloredImage.width, 0)
 
   drawHistogram(histogramCanvas, histogram, state.hueOffset)
-  renderPreview(gradientCanvas, layerColors)
+  renderPreview(gradientCanvas, layerColors, inputColors)
+}
+
+function setupImages() {
+  prepareImages(origImage, coloredImage, finalWidth - 20, finalHeight - 40);
+  createCanvas(finalWidth + 20, origImage.height + 20, existingCanvas)
+  image(origImage, 0, 0)
+  lightnessRange = getLightness(origImage)
+  minLightness = lightnessRange[0]
+  maxLightness = lightnessRange[1]
+}
+
+function updateUI() {
+  histogram = computeHueHistogram(origImage, state.hueOffset)
+  inputColors = getLayerInfo();
+  let result = Array.from(colorList.querySelectorAll("li.color-input")).sort((a,b) => a.querySelector('div input.layer').value - b.querySelector('div input.layer').value)
+  result.forEach(item => colorList.append(item))
 }
 
 function exportBnW() {
@@ -112,9 +124,6 @@ document.getElementById("segmentFlag").addEventListener("input", (event) => {
 })
 
 const colorList = document.getElementById("colorList")
-colorList.addEventListener("click", () => {
-  setup();
-})
 colorList.appendChild(createColorPicker("#000000", 1))
 colorList.appendChild(createColorPicker("#ff0000", 2))
 colorList.appendChild(createColorPicker("#ffe342", 6))

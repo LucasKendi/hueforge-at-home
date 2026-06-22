@@ -10,9 +10,13 @@ export function getLayerInfo() {
   return colorsAt
 }
 
-export function prepareImages(source, destination, finalWidth) {
-  source.resize(finalWidth / 2, 0);
-  destination.resize(finalWidth / 2, 0);
+export function prepareImages(source, destination, width, height) {
+  source.resize(width / 2, 0);
+  destination.resize(width / 2, 0);
+  if (source.height > height) {
+    source.resize(0, height);
+    destination.resize(0, height);
+  }
 
   source.loadPixels()
   destination.loadPixels()
@@ -42,13 +46,17 @@ export function getLightness(image) {
   return [minLightness, maxLightness]
 }
 
-export function renderPreview(image, colors) {
+export function renderPreview(image, colors, inputColors) {
   let ctx = image.getContext("2d");
   let step = image.width / colors.length
-
+  let colorsIndex = Object.keys(inputColors)[0]
+  let currentColor = inputColors[colorsIndex]["color"]
   for (let i = 0; i < colors.length; i++) {
     ctx.fillStyle = colors[i]
-    ctx.fillRect(i*step, 0, step, image.height)
+    ctx.fillRect(i*step, 0, step, image.height / 2)
+    if(inputColors[i + 1]) { currentColor = inputColors[i + 1]["color"]}
+    ctx.fillStyle = currentColor
+    ctx.fillRect(i*step, image.height / 2, step, image.height)
   }
 
   return image
@@ -85,8 +93,10 @@ export function drawHistogram(histogramCanvas, histogram, hueOffset) {
 
 export function addColorToList() {
   const colorList = document.getElementById("colorList")
-  let colorPicker = createColorPicker();
+  let maxLayer = Math.max(...Array.from(colorList.querySelectorAll("li.color-input input.layer")).map(item => parseInt(item.value)))
+  let colorPicker = createColorPicker("#ffffff", maxLayer + 1);
   colorList.appendChild(colorPicker)
+  updateUI();
 }
 
 export function createColorPicker(initialColor = "#ffffff", initialLayer = 1) {
@@ -100,7 +110,7 @@ export function createColorPicker(initialColor = "#ffffff", initialLayer = 1) {
     </div>
     <input class="w-1/3 layer px-2" type="number" value="${initialLayer}" />
     <input class="w-1/3 opacity px-2" type="number" step="0.05" min="0" max="1" value="0.35" />
-    <div onclick="this.parentNode.remove()" class="content-center bg-slate-900 rounded-r-lg px-1.5">
+    <div onclick="this.parentNode.remove(); updateUI();" class="content-center bg-slate-900 rounded-r-lg px-1.5">
       <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
       </svg>
